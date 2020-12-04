@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+    monolith.nginx:
+        build:
+            context: ./env/monolith/nginx
+            dockerfile: Dockerfile
+        volumes:
+            - ./services/monolith:/var/www/symfony/
+        ports:
+            - 80:80
+
+    monolith.db:
+        image: mysql:8.0.20
+        command: --default-authentication-plugin=mysql_native_password
+        volumes:
+            - "monolith_db_volume:/var/lib/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MONOLITH_MYSQL_ROOT_PASSWORD:-hello}
+            MYSQL_DATABASE: ${MONOLITH_MYSQL_DATABASE:-app_db}
+            MYSQL_USER: ${MONOLITH_MYSQL_USER:-app_user}
+            MYSQL_PASSWORD: ${MONOLITH_MYSQL_PASSWORD:-helloworld}
+        ports:
+            - ${MONOLITH_MYSQL_PORT:-3306}:3306
+
+    monolith.php:
+        build:
+            context: ./env/monolith/php
+            dockerfile: Dockerfile
+            args:
+                TIMEZONE: ${TIMEZONE:-America/New_York}
+        volumes:
+            - ./services/monolith:/var/www/symfony/
+
+volumes:
+    monolith_db_volume:
