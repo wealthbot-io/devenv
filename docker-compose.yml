@@ -31,6 +31,7 @@ services:
                 TIMEZONE: ${TIMEZONE:-America/New_York}
         volumes:
             - ./services/monolith:/var/www/symfony/
+            - monolith_composer_volume:/root/.composer
 
     webapp:
         build:
@@ -50,5 +51,55 @@ services:
             - VUE_APP_MONOLITH_HTTP_PORT=${MONOLITH_HTTP_PORT:-10001}
         working_dir: /var/webapp
 
+    accounts.nginx:
+        build:
+            context: ./env/accounts/nginx
+            dockerfile: Dockerfile
+        ports:
+            - "${ACCOUNTS_HTTP_PORT:-12001}:80"
+        volumes:
+            - ./services/accounts:/var/www
+        working_dir: /var/www
+        depends_on:
+            - accounts.php
+
+    accounts.php:
+        build:
+            context: ./env/accounts/php
+            dockerfile: Dockerfile
+        environment:
+            XDEBUG_PORT: ${ACCOUNTS_XDEBUG_PORT:-9001}
+            COMPOSER_MEMORY_LIMIT: -1
+
+        volumes:
+            - ./services/accounts:/var/www
+            - ./env/accounts/php/conf/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
+            - accounts_composer_volume:/root/.composer
+        working_dir: /var/www
+        depends_on:
+            - accounts.db
+
+    accounts.db:
+        image: mysql:8.0.20
+        command: --default-authentication-plugin=mysql_native_password
+        volumes:
+            - "accounts_db_volume:/var/lib/mysql"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${ACCOUNTS_MYSQL_ROOT_PASSWORD:-root}
+            MYSQL_DATABASE: ${ACCOUNTS_MYSQL_DATABASE:-accounts}
+            MYSQL_USER: ${ACCOUNTS_MYSQL_USER:-accounts}
+            MYSQL_PASSWORD: ${ACCOUNTS_MYSQL_PASSWORD:-accounts}
+        ports:
+            - ${ACCOUNTS_MYSQL_PORT:-12003}:3306
+
+    accounts.redis:
+        image: redis:5
+        ports:
+            - '${ACCOUNTS_REDIS_PORT:-12004}:6379'
+
 volumes:
     monolith_db_volume:
+    monolith_composer_volume:
+    accounts_db_volume:
+    accounts_composer_volume:
+
