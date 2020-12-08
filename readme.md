@@ -36,14 +36,18 @@ Requirements: You'll need docker and docker-compose installed on your OS.
 Give it time! This script returns once the containers are up, but the init scripts can take some minutes to run on 
 the first execution.
 
-To check the progress you can run `docker-compose logs -f` or `docker-compose logs -f <service_name>`.
+To check the progress you log on the logs inside the `state` folder. It will contain simplified logs for each 
+service initialization.
 
-If you didn't customized the ports, you'll see the services running on those addresses:
+If you didn't customize the ports, you'll see the services running on those addresses:
 
 | Service    | Sub-service | Address:port    |
 |------------|-------------|-----------------|
 | monolith   | Main (web)  | 127.0.0.1:10001 |
+| monolith   | MySQL       | 127.0.0.1:10002 |
 | accounts   | Main (web)  | 127.0.0.1:12001 |
+| accounts   | MySQL       | 127.0.0.1:12003 |
+| accounts   | Redis       | 127.0.0.1:12004 |
 | webapp     | Vue UI (cli)| 127.0.0.1:11001 |
 | webapp     | Main (web)  | 127.0.0.1:11002 |
 | localstack | Edge port   | 127.0.0.1:13001 |

@@ -40,3 +40,7 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"; \
 RUN php -r "copy('https://npmjs.org/install.sh', 'npm-install.sh');"; \
     bash npm-install.sh; \
     php -r "unlink('npm-install.sh');";
+
+COPY init.sh /init.sh
+
+CMD bash /init.sh

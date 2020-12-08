@@ -32,6 +32,7 @@ services:
         volumes:
             - ./services/monolith:/var/www/symfony/
             - monolith_composer_volume:/root/.composer
+            - ./state:/var/state
 
     webapp:
         build:
@@ -43,6 +44,7 @@ services:
             - '3000:3000'
         volumes:
             - ./services/webapp:/var/webapp
+            - ./state:/var/state
         stdin_open: true
         tty: true
         environment:
@@ -70,11 +72,11 @@ services:
         environment:
             XDEBUG_PORT: ${ACCOUNTS_XDEBUG_PORT:-9001}
             COMPOSER_MEMORY_LIMIT: -1
-
         volumes:
             - ./services/accounts:/var/www
             - ./env/accounts/php/conf/docker-php-ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:cached
             - accounts_composer_volume:/root/.composer
+            - ./state:/var/state
         working_dir: /var/www
         depends_on:
             - accounts.db
@@ -100,14 +102,14 @@ services:
     localstack:
         image: localstack/localstack:latest
         ports:
-            - "4566:4566"
+            - "13001:4566"
         environment:
             - SERVICES=sqs
             - DEBUG=1
             - PORT_WEB_UI=8080
             - DATA_DIR=/tmp/localstack/data
         volumes:
-            - './env/localstack/data:/tmp/localstack'
+            - './env/localstack/storage:/tmp/localstack'
 
 volumes:
     monolith_db_volume:
