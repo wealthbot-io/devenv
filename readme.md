@@ -24,21 +24,29 @@ How we'll move from our current monolith, to a microservices architecture.
 
 ### Starting the environment
 
-1. Clone this repo
-2. Go into the services folder, and clone each one of the source code
-repositories, into the designed folder.
-   
-` * You can use the clone.sh script if your environment is prepared to 
-clone from git using ssh. `
+Requirements: You'll need docker and docker-compose installed on your OS.
 
-| Repository Address | Directory (under services)|
-|--------------------|---------------------------|
-| https://github.com/wealthbot-io/wealthbot | monolith |
-| https://github.com/wealthbot-io/webapp | webapp |
-    
-3. Go to the root folder and run:
+1. Clone this repo
+2. Run the init script located on the root folder (there is a batch version for Windows, and a bash version for 
+   Linux/Mac). This will clone all repositories that are part of Wealthbot inside the services folder.
+3. From the root folder, run:
 
 `docker-compose up -d`
+
+Give it time! This script returns once the containers are up, but the init scripts can take some minutes to run on 
+the first execution.
+
+To check the progress you can run `docker-compose logs -f` or `docker-compose logs -f <service_name>`.
+
+If you didn't customized the ports, you'll see the services running on those addresses:
+
+| Service    | Sub-service | Address:port    |
+|------------|-------------|-----------------|
+| monolith   | Main (web)  | 127.0.0.1:10001 |
+| accounts   | Main (web)  | 127.0.0.1:12001 |
+| webapp     | Vue UI (cli)| 127.0.0.1:11001 |
+| webapp     | Main (web)  | 127.0.0.1:11002 |
+| localstack | Edge port   | 127.0.0.1:13001 |
 
 ### Environment variables
 
