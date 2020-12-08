@@ -29,17 +29,20 @@ if [ $(cat .env | grep "^APP_KEY=..." | wc -l) -eq 0 ]; then
   php artisan key:generate
 fi
 
-echo "[$(date)] Running migrations" >> /var/state/accounts.php.state
+echo "[$(date)] Waiting for database" >> /var/state/accounts.php.state
 # Try until the database is up
 while :
 do
-	if php artisan migrate -q; then
+  php artisan migrate:install -q
+	if php artisan migrate:status -q; then
 		break
 	fi
 	echo "Waiting on database"
 	sleep 1
 done
 
+echo "[$(date)] Running migrations" >> /var/state/accounts.php.state
+php artisan migrate
 
 echo "[$(date)] Linking public storage" >> /var/state/accounts.php.state
 php artisan storage:link
