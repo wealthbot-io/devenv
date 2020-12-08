@@ -33,10 +33,10 @@ Requirements: You'll need docker and docker-compose installed on your OS.
 
 `docker-compose up -d`
 
-Give it time! This script returns once the containers are up, but the init scripts can take some minutes to run on 
-the first execution.
+Give it time! This script returns once the containers are up, but the init scripts can take some minutes to run (in 
+background) on the first execution. Before they're done, the env won't work.
 
-To check the progress you log on the logs inside the `state` folder. It will contain simplified logs for each 
+To check the progress you can look on the logs inside the `state` folder. It will contain simplified logs for each 
 service initialization.
 
 If you didn't customize the ports, you'll see the services running on those addresses:
